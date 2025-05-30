@@ -315,7 +315,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
     />
   )
 }
-
+//CHECK THIS CODE FOR THE SIDEBARCOLOR
 function SidebarInput({
   className,
   ...props
