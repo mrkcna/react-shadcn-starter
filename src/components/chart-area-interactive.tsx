@@ -2,7 +2,8 @@
 
 import * as React from "react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
-
+import { useTheme } from "next-themes"
+const { theme } = useTheme()
 import { useIsMobile } from "@/hooks/use-mobile"
 import {
   Card,
@@ -28,6 +29,29 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@/components/ui/toggle-group"
+const chartColors = {
+  light: {
+    desktop: {
+      start: '#fb923c', // orange-400
+      end: '#fed7aa'    // orange-200
+    },
+    mobile: {
+      start: '#f87171', // red-400  
+      end: '#fecaca'    // red-200
+    }
+  },
+  dark: {
+    desktop: {
+      start: '#f97316', // orange-500
+      end: '#ea580c'    // orange-600
+    },
+    mobile: {
+      start: '#dc2626', // red-600
+      end: '#b91c1c'    // red-700
+    }
+  }
+}
+const currentColors = theme === 'dark' ? chartColors.dark : chartColors.light
 const chartData = [
   { date: "2024-04-01", desktop: 222, mobile: 150 },
   { date: "2024-04-02", desktop: 97, mobile: 180 },
@@ -219,24 +243,24 @@ export function ChartAreaInteractive() {
               <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor="orange"
+                  stopColor={currentColors.desktop.start}
                   stopOpacity={1.0}
                 />
                 <stop
                   offset="95%"
-                  stopColor="red"
+                  stopColor={currentColors.desktop.end}
                   stopOpacity={0.1}
                 />
               </linearGradient>
               <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor="red"
+                  stopColor={currentColors.mobile.start}
                   stopOpacity={0.8}
                 />
                 <stop
                   offset="95%"
-                  stopColor="orange"
+                  stopColor={currentColors.mobile.end}
                   stopOpacity={0.1}
                 />
               </linearGradient>

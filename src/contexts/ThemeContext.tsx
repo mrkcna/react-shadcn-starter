@@ -1,4 +1,4 @@
-import { createContext, ReactNode, use, useEffect, useState } from "react"
+import { createContext, ReactNode, useContext, useEffect, useState } from "react"
 
 type ThemeType = {
     theme: string
@@ -17,7 +17,12 @@ export function ThemeProvider({
     storageKey?: string
 }) {
     const [theme, setTheme] = useState(
-        () => localStorage.getItem(storageKey) ?? defaultTheme
+        () => {
+            if (typeof window !== "undefined") {
+                return localStorage.getItem(storageKey) ?? defaultTheme
+            }
+            return defaultTheme
+        }
     )
 
     useEffect(() => {
@@ -26,7 +31,7 @@ export function ThemeProvider({
         root.classList.remove("light", "dark")
 
         if (theme === "system") {
-            const systemTheme = window.matchMedia("(prefers-color-scheme: light)")
+            const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
                 .matches
                 ? "dark"
                 : "light"
@@ -38,22 +43,23 @@ export function ThemeProvider({
         root.classList.add(theme)
     }, [theme])
 
+    const value = {
+        theme,
+        setTheme: (newTheme: string) => {
+            localStorage.setItem(storageKey, newTheme)
+            setTheme(newTheme)
+        },
+    }
+
     return (
-        <ThemeContext
-            value={{
-                theme,
-                setTheme: (theme: string) => {
-                    localStorage.setItem(storageKey, theme)
-                    setTheme(theme)
-                },
-            }}>
+        <ThemeContext.Provider value={value}>
             {children}
-        </ThemeContext>
+        </ThemeContext.Provider>
     )
 }
 
 export function useTheme(): ThemeType {
-    const context = use(ThemeContext)
+    const context = useContext(ThemeContext) // Changed from use() to useContext()
 
     if (context === null) {
         throw new Error("useTheme must be used within a ThemeProvider")
